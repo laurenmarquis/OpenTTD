@@ -117,6 +117,7 @@ inline RoadBits AxisToRoadBits(Axis a)
 
 /**
  * Calculates the maintenance cost of a number of road bits.
+ * Starts off with an initial price to prevent no infrastructure before resuming origional cost function.
  * @param roadtype Road type to get the cost for.
  * @param num Number of road bits.
  * @param total_num Total number of road bits of all road/tram-types.
@@ -125,6 +126,10 @@ inline RoadBits AxisToRoadBits(Axis a)
 inline Money RoadMaintenanceCost(RoadType roadtype, uint32_t num, uint32_t total_num)
 {
 	assert(roadtype < ROADTYPE_END);
+	if (total_num < 10)
+	{
+		return (_price[Price::InfrastructureRoad] * GetRoadTypeInfo(roadtype)->maintenance_multiplier * 5 * (1 + IntSqrt(10))) >> 11;
+	}
 	return (_price[Price::InfrastructureRoad] * GetRoadTypeInfo(roadtype)->maintenance_multiplier * num * (1 + IntSqrt(total_num))) >> 12;
 }
 
